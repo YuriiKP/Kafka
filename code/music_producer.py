@@ -28,8 +28,7 @@ def generate_users(n: int = 100) -> pd.DataFrame:
     '''
 
     users = []
-
-    for _ in range(na_accum_func):
+    for _ in range(n):
         random_platform = random.choice(
             [
                 FAKER.android_platform_token(),
@@ -138,14 +137,14 @@ def get_rundom_event(df: pd.DataFrame) -> dict[str, Any]:
     user_row = df.sample(n=1).iloc[0]
 
     random_event = random.choices(population=events_ids, weights=events_weights)
-    event_func = events_function[random_event]
+    event_func = events_function[random_event[0]]
 
     return event_func(user_row)
 
 
 def send_kafka(df: pd.DataFrame) -> None: 
     '''
-
+    Метод отправляет каждую секунду в кафку случайное событие
     '''
 
     conf = {'bootstrap.servers': 'localhost:19092'}
@@ -155,11 +154,11 @@ def send_kafka(df: pd.DataFrame) -> None:
 
     while True:
         event = get_rundom_event(df)
-        data_str = json.dumps(event)
+        data_str = json.dumps(event, ensure_ascii=False)
         print(f'Event send: {data_str}')
 
         producer.produce(topic='music_events', value=data_str)
-        producer.flash()
+        producer.flush()
 
         time.sleep(sleep_time)
 
