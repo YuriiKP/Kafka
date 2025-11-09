@@ -191,7 +191,7 @@ create materialized view music_consumer_mat_view to music_consumer_phys
 	  as select * from music_counsumer;
 ```
 
-### 3 Читаем с данными в ClickHouse
+### 3 Читаем с даннымe в ClickHouse
 
 Читаем данные из топика my_topic
 
